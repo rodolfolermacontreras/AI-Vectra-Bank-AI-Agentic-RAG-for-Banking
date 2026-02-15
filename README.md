@@ -11,27 +11,35 @@ the previous one, producing a comprehensive banking analysis report.
 
 ## Architecture
 
-```
-User Query
-    |
-    v
-  EnhancedBankingSequentialOrchestration
-    |
-    +-- Agent 1: Enhanced_Data_Gatherer
-    +-- Agent 2: Enhanced_Fraud_Analyst
-    +-- Agent 3: Enhanced_Loan_Analyst
-    +-- Agent 4: Enhanced_Support_Specialist
-    +-- Agent 5: Enhanced_Risk_Analyst
-    +-- Agent 6: Enhanced_Synthesis_Coordinator
-    |
-    v
-  EnhancedBankingReport (Pydantic model)
+```mermaid
+graph TB
+    subgraph Orchestration["Sequential Agent Orchestration"]
+        A1["1. Data Gatherer"] --> A2["2. Fraud Analyst"]
+        A2 --> A3["3. Loan Analyst"]
+        A3 --> A4["4. Support Specialist"]
+        A4 --> A5["5. Risk Analyst"]
+        A5 --> A6["6. Synthesis Coordinator"]
+    end
+
+    User["User Query"] --> Orchestration
+    Orchestration --> Report["EnhancedBankingReport"]
+
+    subgraph Data["Data Sources"]
+        SQL["Azure SQL Database"]
+        Chroma["ChromaDB + Ada-002"]
+        Blob["Azure Blob / Local Docs"]
+    end
+
+    Orchestration --> Data
 ```
 
 **Data Sources**:
 - Azure SQL Database -- customer transactions and financial data
-- ChromaDB -- banking policy vectors (RAG)
+- ChromaDB -- banking policy vectors with Azure text-embedding-ada-002 (RAG)
 - Azure Blob Storage / local files -- raw policy documents
+
+> **Detailed architecture diagrams** (system topology, data flow, agent
+> orchestration) are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Project Structure
 
@@ -39,6 +47,7 @@ User Query
 Project_4/
   src/                        # Python source code
     main_starter.py           # Entry point and orchestration
+    azure_embedding.py        # Azure OpenAI embedding function for ChromaDB
     blob_connector.py         # Document storage connector
     chroma_manager.py         # ChromaDB vector store manager
     rag_utils.py              # Document processing and RAG utilities
@@ -51,8 +60,10 @@ Project_4/
       insert.sql              # Sample transaction data
       query.sql               # Reference queries
   docs/                       # Documentation and screenshots
+    ARCHITECTURE.md           # Architecture diagrams (Mermaid)
     PROJECT_STATUS_REVIEW.md  # Project progress tracking
     VERSIONS.md               # Branch and version tracking
+  screenshots/                # Azure portal screenshots for submission
   session_memory/             # Session-by-session development logs
   Seed_code/                  # Original starter code (reference)
   reports/                    # Generated analysis reports (gitignored)

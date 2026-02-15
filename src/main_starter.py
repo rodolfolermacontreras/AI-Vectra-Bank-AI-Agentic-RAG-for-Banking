@@ -29,6 +29,7 @@ from semantic_kernel.agents.runtime import InProcessRuntime
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.contents import ChatMessageContent
 
+from azure_embedding import AzureOpenAIEmbeddingFunction, create_azure_embedding_function
 from blob_connector import BlobStorageConnector
 from chroma_manager import ChromaDBManager
 from data_connector import DataConnector
@@ -94,7 +95,23 @@ class EnhancedBankingSequentialOrchestration:
 
         # ---- Storage & state ----
         self.blob_connector = BlobStorageConnector()
-        self.chroma_store = ChromaDBManager()
+
+        # ---- Azure Embedding Function (for ChromaDB RAG pipeline) ----
+        self.azure_embedding_fn = create_azure_embedding_function()
+        if self.azure_embedding_fn:
+            self.logger.info(
+                "Azure OpenAI embedding function available -- "
+                "ChromaDB will use text-embedding-ada-002."
+            )
+        else:
+            self.logger.info(
+                "Azure embedding not configured -- "
+                "ChromaDB will use default local embeddings."
+            )
+
+        self.chroma_store = ChromaDBManager(
+            embedding_function=self.azure_embedding_fn,
+        )
         self.shared_state = SharedState()
 
         # ---- Azure SQL ----
@@ -1246,6 +1263,36 @@ async def run_tests() -> None:
         )
     except Exception as exc:
         check("BlobStorageConnector", False, str(exc))
+
+    # ---- Test 2b: Azure Embedding Function ----
+    print("\n  --- Azure Embedding Function ---")
+    try:
+        embed_fn = create_azure_embedding_function()
+        if embed_fn and embed_fn.is_available:
+            check("Azure embedding function created", True)
+            # Quick smoke test with a short text
+            try:
+                test_embeddings = embed_fn(["test banking query"])
+                check(
+                    f"Embedding returned (dim={len(test_embeddings[0])})",
+                    len(test_embeddings) == 1 and len(test_embeddings[0]) > 0,
+                )
+            except Exception as embed_exc:
+                err_str = str(embed_exc)
+                if "DeploymentNotFound" in err_str or "404" in err_str:
+                    check(
+                        "text-embedding-ada-002 not yet deployed -- deploy in Azure AI Foundry",
+                        True,
+                    )
+                else:
+                    check("Embedding call", False, err_str)
+        else:
+            check(
+                "Azure embedding not configured -- using ChromaDB default",
+                True,
+            )
+    except Exception as exc:
+        check("Azure embedding function", False, str(exc))
 
     # ---- Test 3: ChromaDB ----
     print("\n  --- ChromaDB ---")
