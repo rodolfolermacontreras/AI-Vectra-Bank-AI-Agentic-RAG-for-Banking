@@ -1,0 +1,49 @@
+# ----------------------------------------------------------
+# Git ignore for AI Vectra Bank - Banking Multi-Agent RAG
+# ----------------------------------------------------------
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Environment / credentials
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Runtime artifacts
+logs/
+reports/
+banking_documents/
+chroma_db_banking/
+
+# OS files
+Thumbs.db
+.DS_Store
+Desktop.ini
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
