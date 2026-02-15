@@ -1,16 +1,17 @@
 import chromadb
 from chromadb.config import Settings
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import uuid
 from datetime import datetime
 
 class ChromaDBManager:
     """Enhanced ChromaDB manager with banking-specific functionality"""
     
-    def __init__(self, persist_directory: str = "./chroma_db_banking"):
+    def __init__(self, persist_directory: str = "./chroma_db_banking", embedding_function=None):
         self.persist_directory = persist_directory
         self.client = None
         self.collections = {}
+        self._embedding_function = embedding_function
         self._initialize_client()
     
     def _initialize_client(self):
@@ -39,14 +40,30 @@ class ChromaDBManager:
         
         for name, description in banking_collections.items():
             try:
-                collection = self.client.get_or_create_collection(
-                    name=name,
-                    metadata={"description": description, "type": "banking"}
-                )
+                col_kwargs = {
+                    "name": name,
+                    "metadata": {"description": description, "type": "banking"},
+                }
+                if self._embedding_function is not None:
+                    col_kwargs["embedding_function"] = self._embedding_function
+                collection = self.client.get_or_create_collection(**col_kwargs)
                 self.collections[name] = collection
-                print(f"  ✅ Collection '{name}' initialized")
+                print(f"  \u2705 Collection '{name}' initialized")
             except Exception as e:
-                print(f"  ❌ Failed to initialize collection '{name}': {e}")
+                # Handle embedding function conflict (e.g. switching between
+                # Azure and default embeddings on an existing persisted DB).
+                if "embedding function" in str(e).lower() or "conflict" in str(e).lower():
+                    try:
+                        collection = self.client.get_or_create_collection(
+                            name=name,
+                            metadata={"description": description, "type": "banking"},
+                        )
+                        self.collections[name] = collection
+                        print(f"  \u2705 Collection '{name}' initialized (existing embeddings retained)")
+                    except Exception as fallback_err:
+                        print(f"  \u274c Failed to initialize collection '{name}': {fallback_err}")
+                else:
+                    print(f"  \u274c Failed to initialize collection '{name}': {e}")
     
     def determine_collection(self, filename: str, content: str) -> str:
         """Determine the appropriate collection based on content analysis"""
@@ -215,14 +232,17 @@ class ChromaDBManager:
     async def create_collection(self, name: str, description: str = ""):
         """Create a new collection"""
         try:
-            collection = self.client.get_or_create_collection(
-                name=name,
-                metadata={"description": description, "type": "banking", "created": datetime.now().isoformat()}
-            )
+            col_kwargs = {
+                "name": name,
+                "metadata": {"description": description, "type": "banking", "created": datetime.now().isoformat()},
+            }
+            if self._embedding_function is not None:
+                col_kwargs["embedding_function"] = self._embedding_function
+            collection = self.client.get_or_create_collection(**col_kwargs)
             self.collections[name] = collection
             return collection
         except Exception as e:
-            print(f"❌ Error creating collection {name}: {e}")
+            print(f"\u274c Error creating collection {name}: {e}")
             return None
     
     async def delete_collection(self, name: str):
