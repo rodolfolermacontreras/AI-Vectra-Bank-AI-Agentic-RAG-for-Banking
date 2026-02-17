@@ -17,7 +17,7 @@ required for the Udacity Project 4 submission.
 - [ ] `azure_sql_table_schema.png` -- Table structure/columns view
 
 ### System Output
-- [ ] `test_results.png` -- Output of `python main_starter.py --test` (21/21 pass)
+- [ ] `test_results.png` -- Output of `python main_starter.py --test` (23/23 pass)
 - [ ] `demo_output.png` -- Output of `python main_starter.py --demo`
 - [ ] `eval_output.png` -- Output of `python main_starter.py --all`
 - [ ] `report_sample.png` -- Sample generated banking report

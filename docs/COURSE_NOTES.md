@@ -3,7 +3,7 @@
 > **Source**: Udacity "Microsoft Azure AI Foundry" Nanodegree -- Course 4
 > **Enhanced by**: Team reference annotations, implementation patterns, and
 > production considerations.
-> **Last updated**: 2026-02-16
+> **Last updated**: 2026-02-17
 
 ---
 
