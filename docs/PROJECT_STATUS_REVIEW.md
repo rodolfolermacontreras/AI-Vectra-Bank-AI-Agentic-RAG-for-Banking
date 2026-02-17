@@ -16,11 +16,41 @@
 | Component tests          | DONE        | 23/23 passing with live Azure services          |
 | Azure OpenAI (chat)      | DONE        | gpt-4o deployed on final-project-udacity-ai     |
 | Azure OpenAI (embedding) | DONE        | text-embedding-ada-002 deployed, ChromaDB wired |
-| Azure SQL Database       | NOT STARTED | Need to provision and populate                  |
-| Full evaluation (--all)  | NOT STARTED | Blocked on Azure SQL                            |
+| Azure SQL Database       | DONE        | vectra-bank-sql-ws.database.windows.net (westus)|
+| Full evaluation (--all)  | NOT STARTED | Azure SQL ready, run --demo and --all next      |
 | Screenshots              | NOT STARTED | Azure portal captures for submission            |
 | Reflective report        | NOT STARTED | Required for Udacity submission                 |
 | Git repo                 | DONE        | dev branch, PR #1 merged, conventional commits  |
+
+---
+
+## Update 5 -- 2026-02-17 (Session 6)
+
+**Phase**: Azure SQL Database provisioning
+
+### What was done
+
+- Authenticated via `az login` to Udacity-410 subscription
+- Created Azure SQL Server `vectra-bank-sql-ws` in westus (eastus blocked for new SQL servers)
+- Created database `vectra-bank-db` (Basic tier, 5 DTU, 2GB)
+- Set firewall rules: AllowAzureServices (0.0.0.0) + client IP (76.146.90.11)
+- Ran `data/sql/create.sql` via `sqlcmd` -- transactions table created
+- Ran `data/sql/insert.sql` via `sqlcmd` -- 12 rows inserted (3 customers)
+- Updated `.env` with ODBC connection string
+- Verified `DataConnector.is_available = True` with live Azure SQL
+- Verified `fetch_income('12345')` returns 75000.0 from live database
+- Verified `fetch_transactions('12345')` returns 4 rows from live database
+- Verified `fetch_all_customer_ids()` returns ['11111', '12345', '67890']
+- Re-ran full test suite: **23/23 passed** -- DataConnector now uses live SQL (no longer fallback)
+
+### Test results
+
+```
+  TESTS: 23/23 passed, 0/23 failed
+  [PASS] Azure SQL connection LIVE
+  [PASS] fetch_income returned 75000.0
+  [PASS] fetch_transactions returned 4 rows
+```
 
 ---
 
@@ -170,14 +200,16 @@
 - [x] Create architecture diagrams (Mermaid)
 - [x] Merge via PR #1, push to dev
 
-### Phase 3: Azure SQL Database (NEXT)
-- [ ] Provision Azure SQL Database in Regroup_8kkYx8D resource group
-- [ ] Run create.sql to create transactions table
-- [ ] Run insert.sql to populate sample data
-- [ ] Update .env with SQL connection string
-- [ ] Verify DataConnector works with live database
+### Phase 3: Azure SQL Database (DONE)
+- [x] Provision Azure SQL Server (`vectra-bank-sql-ws`, westus)
+- [x] Create database (`vectra-bank-db`, Basic tier, 5 DTU)
+- [x] Set firewall rules (Azure services + client IP)
+- [x] Run create.sql to create transactions table
+- [x] Run insert.sql to populate sample data (12 rows, 3 customers)
+- [x] Update .env with ODBC connection string
+- [x] Verify DataConnector works with live database (23/23 tests pass)
 
-### Phase 4: Full Evaluation
+### Phase 4: Full Evaluation (NEXT)
 - [ ] Run `--demo` with live Azure SQL + OpenAI
 - [ ] Run `--all` for complete 5-scenario evaluation
 - [ ] Review generated reports for quality
@@ -202,7 +234,8 @@
 | Chat Deployment | gpt-4o (2024-11-20, Global Standard) | Verified |
 | Embedding Deployment | text-embedding-ada-002 (v2, Global Standard) | Verified |
 | Endpoint | final-project-udacity-ai.cognitiveservices.azure.com | Verified |
-| Azure SQL | (not provisioned) | Pending |
+| SQL Server | vectra-bank-sql-ws.database.windows.net (westus) | Verified |
+| SQL Database | vectra-bank-db (Basic, 5 DTU, 12 rows) | Verified |
 | Blob Storage | (using local fallback) | Optional |
 
 ---

@@ -43,6 +43,7 @@ chore(scope): maintenance (deps, config, etc.)
 | 0.1.0 | 2026-02-15 | Initial implementation -- 6 agents, orchestration, 21/21 tests |
 | 0.2.0 | 2026-02-16 | Azure embedding integration, architecture diagrams, PR #1 merged |
 | 0.3.0 | 2026-02-17 | Live Azure AI Foundry deployment -- gpt-4o + ada-002, 23/23 tests |
+| 0.4.0 | 2026-02-17 | Azure SQL provisioned -- full data plane live, 23/23 tests with live DB |
 
 ## Commit Log
 
