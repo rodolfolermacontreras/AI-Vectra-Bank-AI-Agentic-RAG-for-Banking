@@ -13,13 +13,67 @@
 | Project structure        | DONE        | src/, data/sql/, docs/, session_memory/         |
 | Python environment       | DONE        | 3.12 venv, all packages installed               |
 | Source code              | DONE        | 6 agents, orchestration, models, data connector |
-| Component tests          | DONE        | 21/21 passing                                   |
-| Azure OpenAI connection  | DONE        | gpt-4o deployment verified                      |
+| Component tests          | DONE        | 23/23 passing with live Azure services          |
+| Azure OpenAI (chat)      | DONE        | gpt-4o deployed on final-project-udacity-ai     |
+| Azure OpenAI (embedding) | DONE        | text-embedding-ada-002 deployed, ChromaDB wired |
 | Azure SQL Database       | NOT STARTED | Need to provision and populate                  |
 | Full evaluation (--all)  | NOT STARTED | Blocked on Azure SQL                            |
 | Screenshots              | NOT STARTED | Azure portal captures for submission            |
 | Reflective report        | NOT STARTED | Required for Udacity submission                 |
-| Git repo                 | DONE        | Initial commit pushed to GitHub                 |
+| Git repo                 | DONE        | dev branch, PR #1 merged, conventional commits  |
+
+---
+
+## Update 4 -- 2026-02-17 (Session 5)
+
+**Phase**: Azure AI Foundry deployment and live integration
+
+### What was done
+
+- Received new Udacity cloud credentials (old Project 3 credentials expired)
+- Discovered Azure AI Foundry resource `final-project-udacity-ai` via REST API probing
+- Found serverless models available (Phi-4, DeepSeek-R1, Cohere-embed-v3-english)
+- Deployed **gpt-4o** (Global Standard, 50K TPM) via Azure Foundry portal
+- Deployed **text-embedding-ada-002** (Global Standard, 120K TPM) via Azure Foundry portal
+- Updated `.env` with new endpoint and API key
+- Updated `azure_embedding.py` API version to `2024-06-01`
+- Added `openai` and `azure-ai-inference` to `requirements.txt`
+- Verified all 4 integration points: OpenAI SDK chat, OpenAI SDK embeddings,
+  Semantic Kernel `AzureChatCompletion`, and `AzureOpenAIEmbeddingFunction`
+- Cleaned stale ChromaDB (will rebuild with 1536-dim Azure embeddings on next run)
+- Removed 7 temporary discovery/probe scripts
+- Committed and pushed to `dev` branch
+
+### Test results
+
+```
+  TESTS: 23/23 passed, 0/23 failed
+```
+
+---
+
+## Update 3 -- 2026-02-16 (Sessions 3-4)
+
+**Phase**: Azure embedding integration, architecture diagrams, course notes
+
+### What was done
+
+- Created `src/azure_embedding.py` -- ChromaDB-compatible Azure OpenAI embedding function
+- Modified `src/chroma_manager.py` -- embedding_function parameter + conflict handling
+- Modified `src/main_starter.py` -- Azure embedding integration + test
+- Created `docs/ARCHITECTURE.md` -- 3 Mermaid diagrams (system, data flow, orchestration)
+- Created `screenshots/README.md` -- submission checklist
+- Updated `README.md` with Mermaid diagram + project structure
+- Created PR #1 and merged `dev/azure-embeddings-and-diagrams` into `main`
+- Created fresh `dev` branch from updated `main`
+- Created comprehensive `docs/COURSE_NOTES.md` (~989 lines)
+- All committed and pushed
+
+### Test results
+
+```
+  TESTS: 23/23 passed, 0/23 failed
+```
 
 ---
 
@@ -103,28 +157,34 @@
 - [x] Read and understand seed code
 - [x] Set up Python 3.12 environment
 - [x] Implement models, data connector, orchestration
-- [x] Pass all component tests
-- [x] Connect to Azure OpenAI with real credentials
+- [x] Pass all component tests (23/23)
 - [x] Clean up code (no emojis, proper paths)
 - [x] Create project documentation
 - [x] Push initial code to GitHub
 
-### Phase 2: Azure Infrastructure (NEXT)
+### Phase 2: Azure AI Foundry (DONE)
+- [x] Deploy gpt-4o on final-project-udacity-ai
+- [x] Deploy text-embedding-ada-002 on final-project-udacity-ai
+- [x] Implement Azure embedding function for ChromaDB
+- [x] Verify Semantic Kernel + OpenAI SDK integration
+- [x] Create architecture diagrams (Mermaid)
+- [x] Merge via PR #1, push to dev
+
+### Phase 3: Azure SQL Database (NEXT)
 - [ ] Provision Azure SQL Database in Regroup_8kkYx8D resource group
 - [ ] Run create.sql to create transactions table
 - [ ] Run insert.sql to populate sample data
 - [ ] Update .env with SQL connection string
 - [ ] Verify DataConnector works with live database
-- [ ] Take Azure portal screenshots
 
-### Phase 3: Full Evaluation
+### Phase 4: Full Evaluation
 - [ ] Run `--demo` with live Azure SQL + OpenAI
 - [ ] Run `--all` for complete 5-scenario evaluation
 - [ ] Review generated reports for quality
-- [ ] Capture terminal output screenshots
+- [ ] Capture all screenshots (Azure portal + terminal)
 
-### Phase 4: Submission
-- [ ] Write reflective report
+### Phase 5: Submission
+- [ ] Write reflective report (LaTeX or Word)
 - [ ] Compile all screenshots
 - [ ] Final code review and cleanup
 - [ ] Submit to Udacity
@@ -135,10 +195,13 @@
 
 | Resource | Value | Status |
 |----------|-------|--------|
-| Subscription | 052d7bab-4db1-4651-a14c-c5b4d14f6cb4 | Active |
-| Resource Group | Regroup_8kkYx8D | Active |
-| Azure OpenAI | udacity-travel-aoai | Verified working |
-| Deployment | gpt-4o | Verified working |
+| Subscription | Udacity-410 (052d7bab-...-c5b4d14f6cb4) | Active |
+| Resource Group | Regroup_8kkYx8D (eastus) | Active |
+| AI Foundry Account | final-project-udacity-ai | Active |
+| AI Foundry Project | project-4-udacity-multi-ai-rag | Active |
+| Chat Deployment | gpt-4o (2024-11-20, Global Standard) | Verified |
+| Embedding Deployment | text-embedding-ada-002 (v2, Global Standard) | Verified |
+| Endpoint | final-project-udacity-ai.cognitiveservices.azure.com | Verified |
 | Azure SQL | (not provisioned) | Pending |
 | Blob Storage | (using local fallback) | Optional |
 
@@ -151,6 +214,8 @@
 | Python | 3.12 | 3.14 incompatible with pydantic-core |
 | semantic-kernel | 1.37.0 | Microsoft AI orchestration |
 | chromadb | 1.0.20 | Vector store for RAG |
+| openai | 1.x | Azure OpenAI SDK |
+| azure-ai-inference | 1.x | Azure AI Model Inference SDK |
 | python-docx | 1.2.0 | Report generation |
 | pyodbc | 5.2.0 | Azure SQL connectivity |
 | pydantic | 2.11.10 | Data validation |

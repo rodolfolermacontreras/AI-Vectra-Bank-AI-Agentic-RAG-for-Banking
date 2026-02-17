@@ -38,7 +38,7 @@ class AzureOpenAIEmbeddingFunction(EmbeddingFunction[Documents]):
         endpoint: str = "",
         api_key: str = "",
         deployment_name: str = "text-embedding-ada-002",
-        api_version: str = "2024-02-01",
+        api_version: str = "2024-06-01",
     ) -> None:
         self._endpoint = endpoint
         self._api_key = api_key
@@ -115,7 +115,7 @@ class AzureOpenAIEmbeddingFunction(EmbeddingFunction[Documents]):
             endpoint=config.get("endpoint", ""),
             api_key=config.get("api_key", ""),
             deployment_name=config.get("deployment_name", "text-embedding-ada-002"),
-            api_version=config.get("api_version", "2024-02-01"),
+            api_version=config.get("api_version", "2024-06-01"),
         )
 
     @property

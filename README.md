@@ -125,10 +125,12 @@ python main_starter.py --all
 ## Tech Stack
 
 | Component | Version |
-|-----------|---------|
+|-----------|---------||
 | Python | 3.12 |
 | semantic-kernel | 1.37.0 |
 | chromadb | 1.0.20 |
+| openai | 1.x |
+| azure-ai-inference | 1.x |
 | python-docx | 1.2.0 |
 | pyodbc | 5.2.0 |
 | pydantic | 2.x |
