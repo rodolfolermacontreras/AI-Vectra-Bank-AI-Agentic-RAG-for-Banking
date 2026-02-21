@@ -219,7 +219,39 @@ The risk scores appropriately differentiate between customer profiles:
 
 ---
 
-## 7. Conclusion
+## 7. Suggestions for Improvement
+
+Based on the testing and evaluation experience, two concrete improvements
+would meaningfully enhance the system:
+
+### 7.1 Parallel Agent Execution with Dependency Awareness
+
+The current sequential pipeline takes approximately 60 seconds per scenario
+because each agent waits for its predecessor to finish. In practice, some
+agents are partially independent -- the Fraud Analyst and Loan Analyst both
+depend on the Data Gatherer but not on each other. Introducing a
+**dependency-aware parallel scheduler** (e.g., a DAG-based execution engine)
+would allow Fraud and Loan analysis to run concurrently once the Data
+Gatherer completes. Based on observed timings, this could reduce end-to-end
+latency by 30--40%, bringing it closer to 35--40 seconds per scenario. The
+Risk Analyst and Synthesis Coordinator would still wait for all upstream
+agents, preserving correctness while improving throughput.
+
+### 7.2 Conversation Memory for Multi-Turn Interactions
+
+The system currently treats every query as a one-shot interaction -- there is
+no memory of previous conversations. In a real banking support scenario, a
+customer might ask about their loan eligibility, then follow up with
+"what if I increase my down payment?" or "show me more detail on the fraud
+flags." Adding a **session-based conversation memory** (e.g., using Semantic
+Kernel's chat history or an external store like Redis) would allow agents to
+reference prior context, avoid redundant data fetches, and deliver more
+natural multi-turn dialogues. This would also improve the customer support
+agent's ability to track issue resolution across interactions.
+
+---
+
+## 8. Conclusion
 
 This project demonstrates a production-quality multi-agent banking system
 that integrates Azure AI Foundry (GPT-4o), Azure OpenAI Embeddings
