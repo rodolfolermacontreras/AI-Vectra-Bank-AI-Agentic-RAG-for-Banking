@@ -232,7 +232,7 @@ class BlobStorageConnector:
             }
         
         self._save_document_registry()
-        print(f"✅ Uploaded {len(sample_documents)} sample banking documents")
+        print(f"[OK] Uploaded {len(sample_documents)} sample banking documents")
     
     def list_documents(self) -> List[str]:
         """List all available documents"""
@@ -248,7 +248,7 @@ class BlobStorageConnector:
             with open(file_path, 'r', encoding='utf-8') as f:
                 return f.read()
         except Exception as e:
-            print(f"❌ Error reading document {doc_name}: {e}")
+            print(f"[ERROR] Error reading document {doc_name}: {e}")
             return None
     
     def get_document_metadata(self, doc_name: str) -> Optional[Dict]:
@@ -272,10 +272,10 @@ class BlobStorageConnector:
             }
             
             self._save_document_registry()
-            print(f"✅ Uploaded custom document: {filename}")
+            print(f"[OK] Uploaded custom document: {filename}")
             return True
         except Exception as e:
-            print(f"❌ Error uploading document {filename}: {e}")
+            print(f"[ERROR] Error uploading document {filename}: {e}")
             return False
     
     def delete_document(self, doc_name: str) -> bool:
@@ -288,10 +288,10 @@ class BlobStorageConnector:
             os.remove(file_path)
             del self.documents[doc_name]
             self._save_document_registry()
-            print(f"✅ Deleted document: {doc_name}")
+            print(f"[OK] Deleted document: {doc_name}")
             return True
         except Exception as e:
-            print(f"❌ Error deleting document {doc_name}: {e}")
+            print(f"[ERROR] Error deleting document {doc_name}: {e}")
             return False
     
     def search_documents(self, query: str) -> List[Dict]:

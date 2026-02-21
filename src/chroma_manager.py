@@ -21,10 +21,10 @@ class ChromaDBManager:
                 path=self.persist_directory,
                 settings=Settings(anonymized_telemetry=False)
             )
-            print("✅ ChromaDB client initialized successfully")
+            print("[OK] ChromaDB client initialized successfully")
             self._initialize_collections()
         except Exception as e:
-            print(f"❌ ChromaDB initialization failed: {e}")
+            print(f"[ERROR] ChromaDB initialization failed: {e}")
             self.client = None
     
     def _initialize_collections(self):
@@ -48,7 +48,7 @@ class ChromaDBManager:
                     col_kwargs["embedding_function"] = self._embedding_function
                 collection = self.client.get_or_create_collection(**col_kwargs)
                 self.collections[name] = collection
-                print(f"  \u2705 Collection '{name}' initialized")
+                print(f"  [OK] Collection '{name}' initialized")
             except Exception as e:
                 # Handle embedding function conflict (e.g. switching between
                 # Azure and default embeddings on an existing persisted DB).
@@ -59,11 +59,11 @@ class ChromaDBManager:
                             metadata={"description": description, "type": "banking"},
                         )
                         self.collections[name] = collection
-                        print(f"  \u2705 Collection '{name}' initialized (existing embeddings retained)")
+                        print(f"  [OK] Collection '{name}' initialized (existing embeddings retained)")
                     except Exception as fallback_err:
-                        print(f"  \u274c Failed to initialize collection '{name}': {fallback_err}")
+                        print(f"  [FAIL] Failed to initialize collection '{name}': {fallback_err}")
                 else:
-                    print(f"  \u274c Failed to initialize collection '{name}': {e}")
+                    print(f"  [FAIL] Failed to initialize collection '{name}': {e}")
     
     def determine_collection(self, filename: str, content: str) -> str:
         """Determine the appropriate collection based on content analysis"""
@@ -117,10 +117,10 @@ class ChromaDBManager:
                 metadatas=metadatas,
                 ids=ids
             )
-            print(f"  ✅ Stored {len(documents)} chunks from {filename} in {collection_type}")
+            print(f"  [OK] Stored {len(documents)} chunks from {filename} in {collection_type}")
             return len(documents)
         except Exception as e:
-            print(f"  ❌ Failed to store chunks from {filename}: {e}")
+            print(f"  [FAIL] Failed to store chunks from {filename}: {e}")
             return 0
     
     def _chunk_document(self, content: str, filename: str) -> List[str]:
@@ -188,7 +188,7 @@ class ChromaDBManager:
                             "chunk_info": f"Chunk {metadata.get('chunk_index', 0)} of {metadata.get('total_chunks', 1)}"
                         })
             except Exception as e:
-                print(f"  ❌ Search error in {collection_name}: {e}")
+                print(f"  [ERROR] Search error in {collection_name}: {e}")
         
         # Sort by relevance (higher score is better)
         all_results.sort(key=lambda x: x["relevance_score"], reverse=True)
@@ -242,7 +242,7 @@ class ChromaDBManager:
             self.collections[name] = collection
             return collection
         except Exception as e:
-            print(f"\u274c Error creating collection {name}: {e}")
+            print(f"[ERROR] Error creating collection {name}: {e}")
             return None
     
     async def delete_collection(self, name: str):
@@ -251,9 +251,9 @@ class ChromaDBManager:
             if name in self.collections:
                 self.client.delete_collection(name)
                 del self.collections[name]
-                print(f"✅ Deleted collection: {name}")
+                print(f"[OK] Deleted collection: {name}")
         except Exception as e:
-            print(f"❌ Error deleting collection {name}: {e}")
+            print(f"[ERROR] Error deleting collection {name}: {e}")
     
     async def get_document_chunks(self, filename: str, collection_name: str) -> List[Dict]:
         """Get all chunks for a specific document"""
@@ -272,5 +272,5 @@ class ChromaDBManager:
             
             return sorted(chunks, key=lambda x: x["metadata"].get("chunk_index", 0))
         except Exception as e:
-            print(f"❌ Error getting chunks for {filename}: {e}")
+            print(f"[ERROR] Error getting chunks for {filename}: {e}")
             return []
