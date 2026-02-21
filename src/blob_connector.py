@@ -3,6 +3,12 @@ import json
 from typing import List, Dict, Optional
 from datetime import datetime
 
+try:
+    from PyPDF2 import PdfReader
+    PDF_SUPPORT = True
+except ImportError:
+    PDF_SUPPORT = False
+
 class BlobStorageConnector:
     """Enhanced blob storage connector with banking document management"""
     
@@ -232,23 +238,54 @@ class BlobStorageConnector:
             }
         
         self._save_document_registry()
-        print(f"✅ Uploaded {len(sample_documents)} sample banking documents")
+        print(f"[OK] Uploaded {len(sample_documents)} sample banking documents")
     
     def list_documents(self) -> List[str]:
         """List all available documents"""
         return list(self.documents.keys())
     
     def get_document_content(self, doc_name: str) -> Optional[str]:
-        """Get document content with error handling"""
+        """Get document content with error handling.
+        
+        Supports both plain text (.md, .txt) and PDF (.pdf) files.
+        PDF text extraction uses PyPDF2 to read all pages.
+        """
         if doc_name not in self.documents:
             return None
         
         file_path = os.path.join(self.storage_path, doc_name)
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return f.read()
+            if doc_name.lower().endswith('.pdf'):
+                return self._read_pdf(file_path)
+            else:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    return f.read()
         except Exception as e:
-            print(f"❌ Error reading document {doc_name}: {e}")
+            print(f"[ERROR] Error reading document {doc_name}: {e}")
+            return None
+    
+    def _read_pdf(self, file_path: str) -> Optional[str]:
+        """Extract text content from a PDF file.
+        
+        Uses PyPDF2 to read all pages and concatenate their text.
+        Returns None if PDF support is not available.
+        """
+        if not PDF_SUPPORT:
+            print("[ERROR] PyPDF2 is not installed. Install it with: pip install PyPDF2")
+            return None
+        
+        try:
+            reader = PdfReader(file_path)
+            pages_text = []
+            for page in reader.pages:
+                text = page.extract_text()
+                if text:
+                    pages_text.append(text)
+            full_text = "\n\n".join(pages_text)
+            print(f"[OK] Extracted text from PDF: {os.path.basename(file_path)} ({len(reader.pages)} pages)")
+            return full_text
+        except Exception as e:
+            print(f"[ERROR] Failed to extract text from PDF {file_path}: {e}")
             return None
     
     def get_document_metadata(self, doc_name: str) -> Optional[Dict]:
@@ -272,10 +309,10 @@ class BlobStorageConnector:
             }
             
             self._save_document_registry()
-            print(f"✅ Uploaded custom document: {filename}")
+            print(f"[OK] Uploaded custom document: {filename}")
             return True
         except Exception as e:
-            print(f"❌ Error uploading document {filename}: {e}")
+            print(f"[ERROR] Error uploading document {filename}: {e}")
             return False
     
     def delete_document(self, doc_name: str) -> bool:
@@ -288,10 +325,10 @@ class BlobStorageConnector:
             os.remove(file_path)
             del self.documents[doc_name]
             self._save_document_registry()
-            print(f"✅ Deleted document: {doc_name}")
+            print(f"[OK] Deleted document: {doc_name}")
             return True
         except Exception as e:
-            print(f"❌ Error deleting document {doc_name}: {e}")
+            print(f"[ERROR] Error deleting document {doc_name}: {e}")
             return False
     
     def search_documents(self, query: str) -> List[Dict]:

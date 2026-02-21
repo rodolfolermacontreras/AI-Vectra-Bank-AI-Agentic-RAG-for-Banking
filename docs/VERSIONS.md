@@ -17,7 +17,7 @@ main                  <-- stable, tested code only (via PR)
 | Branch | Goal | Status | Created | Last Updated |
 |--------|------|--------|---------|--------------|
 | main   | Stable production code | Active | 2026-02-15 | 2026-02-16 |
-| dev    | Current development | Active | 2026-02-16 | 2026-02-17 |
+| dev    | Current development | Active | 2026-02-16 | 2026-02-21 |
 
 ## Merged Branches
 
@@ -44,6 +44,7 @@ chore(scope): maintenance (deps, config, etc.)
 | 0.2.0 | 2026-02-16 | Azure embedding integration, architecture diagrams, PR #1 merged |
 | 0.3.0 | 2026-02-17 | Live Azure AI Foundry deployment -- gpt-4o + ada-002, 23/23 tests |
 | 0.4.0 | 2026-02-17 | Azure SQL provisioned -- full data plane live, 23/23 tests with live DB |
+| 0.5.0 | 2026-02-21 | Final validation -- emoji fix, demo + eval runs (5/5), reflective report |
 
 ## Commit Log
 
@@ -55,3 +56,6 @@ chore(scope): maintenance (deps, config, etc.)
 | 70bdfdb | main | Merge pull request #1 (azure-embeddings-and-diagrams -> main) |
 | 537586e | dev | docs: add enhanced multi-agent systems course notes for team reference |
 | 54668d2 | dev | feat: integrate live Azure AI Foundry deployments (gpt-4o + ada-002) |
+| 77d90d2 | dev | docs: update all project documentation to reflect current state (v0.3.0) |
+| ab58df4 | dev | feat(sql): provision Azure SQL Database and verify live DataConnector (v0.4.0) |
+| 6744c03 | dev | fix: replace emoji characters with ASCII in seed code files (cp1252 compat) |

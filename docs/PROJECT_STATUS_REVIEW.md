@@ -17,10 +17,35 @@
 | Azure OpenAI (chat)      | DONE        | gpt-4o deployed on final-project-udacity-ai     |
 | Azure OpenAI (embedding) | DONE        | text-embedding-ada-002 deployed, ChromaDB wired |
 | Azure SQL Database       | DONE        | vectra-bank-sql-ws.database.windows.net (westus)|
-| Full evaluation (--all)  | NOT STARTED | Azure SQL ready, run --demo and --all next      |
-| Screenshots              | NOT STARTED | Azure portal captures for submission            |
-| Reflective report        | NOT STARTED | Required for Udacity submission                 |
+| Full evaluation (--all)  | DONE        | 5/5 scenarios passed, all 6 agents activated    |
+| Screenshots              | DONE        | Azure portal + terminal captures taken          |
+| Reflective report        | DONE        | REFLECTIVE_REPORT.md written                    |
 | Git repo                 | DONE        | dev branch, PR #1 merged, conventional commits  |
+
+---
+
+## Update 6 -- 2026-02-21 (Session 8)
+
+**Phase**: Final validation and submission preparation
+
+### What changed
+- Re-authenticated with new Udacity credentials (vocareumvocareum tenant)
+- Verified all Azure resources survived (AI Foundry + SQL Server + Database)
+- Fixed emoji encoding crash in seed code files (cp1252 compatibility)
+- Ran `--demo`: 1 scenario, customer 12345, 6/6 agents, risk=12 (low), 62s
+- Ran `--all`: 5/5 scenarios passed -- risk scores: 12, 52, 94, 12, 52
+- Generated 6 report JSONs + evaluation_summary.json
+- Wrote REFLECTIVE_REPORT.md
+- Captured screenshots for submission
+
+### Evaluation results
+| Scenario | Customer | Risk Score | Assessment |
+|----------|----------|-----------|------------|
+| 1 | 12345 | 12/100 | Low |
+| 2 | 67890 | 52/100 | High |
+| 3 | 11111 | 94/100 | Critical |
+| 4 | 12345 | 12/100 | Low |
+| 5 | 67890 | 52/100 | High |
 
 ---
 
