@@ -293,9 +293,35 @@ st.markdown(
     .vb-banner h1 { margin:0; font-size:1.55rem; font-weight:700; letter-spacing:-.3px; }
     .vb-banner p  { margin:2px 0 0; font-size:.88rem; opacity:.75; }
 
-    /* Sidebar */
-    [data-testid="stSidebar"] { background:#f8fafc; }
-    .sidebar-brand { font-size:1.1rem; font-weight:700; color:var(--navy); margin-bottom:.6rem; }
+    /* Sidebar — dark navy to match banner */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, var(--navy) 0%, var(--navy-mid) 100%) !important;
+    }
+    [data-testid="stSidebar"] * {
+        color: #e2e8f0 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] span,
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] strong,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] .stRadio label span {
+        color: #e2e8f0 !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stCaption"] {
+        color: #94a3b8 !important;
+    }
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255,255,255,0.12) !important;
+    }
+    /* Sidebar radio: highlight selected item */
+    [data-testid="stSidebar"] [role="radiogroup"] label[data-checked="true"] {
+        background: rgba(37,99,235,0.25) !important;
+        border-radius: 6px;
+    }
+    .sidebar-brand {
+        font-size:1.1rem; font-weight:700; color:#fff !important;
+        margin-bottom:.6rem; letter-spacing:-.2px;
+    }
 
     /* Section headers inside content */
     .sec-label {
