@@ -135,6 +135,8 @@ flowchart LR
 
 The project includes an interactive web dashboard built with Streamlit:
 
+![AI Vectra Bank Dashboard](screenshots/App_UI.png)
+
 ```bash
 cd src
 streamlit run app.py
